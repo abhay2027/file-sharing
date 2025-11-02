@@ -48,7 +48,7 @@ public:
             totalrecieved+=n;
         }
         outfile.close();
-        cout<<"file recieved "<<totalrecieved<<"bytes";
+        cout<<"file recieved "<<totalrecieved<<" bytes";
     }
 };
 int main(int argc, char *argv[])
