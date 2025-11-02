@@ -31,7 +31,6 @@ public:
         {
             cerr << "file not found";
         }
-        cout << "file size" << filesize;
 
         ofstream outfile("the_metamorphosis.pdf",ios::binary);
         if (!outfile){
@@ -49,7 +48,7 @@ public:
             totalrecieved+=n;
         }
         outfile.close();
-        cout<<"file recieved"<<totalrecieved;
+        cout<<"file recieved "<<totalrecieved;
     }
 };
 int main(int argc, char *argv[])
