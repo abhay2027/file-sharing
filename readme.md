@@ -1,2 +1,2 @@
 ```bash
-./client accommodation-you-cfr-warnings.trycloudflare.com 9090
+./client kuroshite.duckdns.org 2324
