@@ -12,10 +12,29 @@ void error(const char *msg)
     perror(msg);
     exit(1);
 }
+
 class fileserver
 {
+    int n;
+    char filename[200];
 public:
-    void sendfile(int clientsock, const string &filename)
+
+void fetchfile(int clientsock) {
+    bzero(filename, 200);
+    n = read(clientsock, filename, 200);
+    if (n < 0) {
+        cerr << "Error reading file name";
+        exit(1);
+    }
+    cout << strlen(filename) << endl;
+    filename[strcspn(filename, "\r\n")] = '\0';
+    int len = strlen(filename);
+
+    cout << "Requested file: [" << filename << "]" << endl;
+    cout << strlen(filename) << endl;
+}
+
+    void sendfile(int clientsock)
     {
         ifstream file(filename, ios::binary | ios::ate);
         if (!file)
@@ -27,7 +46,7 @@ public:
         }
         long filesize = file.tellg();
         file.seekg(0, ios::beg);
-    
+
         send(clientsock, &filesize, sizeof(filesize), 0);
     
         char buffer[1024];
@@ -37,7 +56,7 @@ public:
             send(clientsock, buffer, file.gcount(), 0);
         }
         file.close();
-        cout << "file sent: " << filesize << "bytes";
+        cout << "file sent: " << filesize << " bytes";
     }
 };
 int main(int argc, char *argv[])
@@ -73,7 +92,8 @@ int main(int argc, char *argv[])
         error("Error on Accept");
 
     fileserver serverobj;
-    serverobj.sendfile(newsockfd, "The Metamorphosis.pdf");
+    serverobj.fetchfile(newsockfd);
+    serverobj.sendfile(newsockfd);
     close(newsockfd);
     close(sockfd);
     return 0;
