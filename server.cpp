@@ -17,22 +17,34 @@ class fileserver
 {
     int n;
     char filename[200];
+    string menu;
+
 public:
+    void fetchfile(int clientsock)
+    {
+        menu =
+            "Available files are:\n"
+            "1. Alice in Borderland S03E03 HIN ENG JAP 1080p.mkv\n"
+            "2. C++ Programming Task PDF.pdf\n"
+            "3. The Metamorphosis.pdf\n"
+            "4. white night.pdf\n"
+            "Enter the name of file: ";
 
-void fetchfile(int clientsock) {
-    bzero(filename, 200);
-    n = read(clientsock, filename, 200);
-    if (n < 0) {
-        cerr << "Error reading file name";
-        exit(1);
+        write(clientsock, menu.c_str(), menu.size());
+        bzero(filename, 200);
+        n = read(clientsock, filename, 200);
+        if (n < 0)
+        {
+            cerr << "Error reading file name";
+            exit(1);
+        }
+        cout << strlen(filename) << endl;
+        filename[strcspn(filename, "\r\n")] = '\0';
+        int len = strlen(filename);
+
+        cout << "Requested file: [" << filename << "]" << endl;
+        cout << strlen(filename) << endl;
     }
-    cout << strlen(filename) << endl;
-    filename[strcspn(filename, "\r\n")] = '\0';
-    int len = strlen(filename);
-
-    cout << "Requested file: [" << filename << "]" << endl;
-    cout << strlen(filename) << endl;
-}
 
     void sendfile(int clientsock)
     {
@@ -48,7 +60,7 @@ void fetchfile(int clientsock) {
         file.seekg(0, ios::beg);
 
         send(clientsock, &filesize, sizeof(filesize), 0);
-    
+
         char buffer[1024];
         while (!file.eof())
         {
