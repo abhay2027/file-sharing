@@ -17,7 +17,20 @@ void error(const char *msg)
 }
 class fileclient
 {
+    char filename[200];
+    int n;
 public:
+    void files(int sock){
+        bzero(filename,200);
+        cout<<"available files are"<<endl;
+     cout<<"1. Alice in Borderland S03E03 HIN ENG JAP 1080p.mkv"<<endl
+     <<"2. C++ Programming Task PDF.pdf"<<endl<<"3. The Metamorphosis.pdf"<<endl
+     <<"4. white night.pdf"<<endl;
+     cout<<"Enter the name of file: ";
+    filename[strcspn(filename, "\r\n")] = '\0';
+     fgets(filename,200,stdin);
+     n=write(sock,filename,strlen(filename));
+    }
     void recievefile(int sock)
     {
         long filesize;
@@ -32,7 +45,7 @@ public:
             cerr << "file not found";
         }
 
-        ofstream outfile("the_metamorphosis.pdf",ios::binary);
+        ofstream outfile(filename,ios::binary);
         if (!outfile){
             cerr<<"failed to open output file";
         }
@@ -48,7 +61,7 @@ public:
             totalrecieved+=n;
         }
         outfile.close();
-        cout<<"file recieved "<<totalrecieved<<" bytes";
+        cout<<"file recieved: "<<totalrecieved<<" bytes"<<endl;
     }
 };
 int main(int argc, char *argv[])
@@ -79,6 +92,7 @@ int main(int argc, char *argv[])
         error("connection failed");
 
     fileclient clientobj;
+    clientobj.files(sockfd);
     clientobj.recievefile(sockfd);
     close(sockfd);
 
