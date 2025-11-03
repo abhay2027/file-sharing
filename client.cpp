@@ -19,18 +19,19 @@ class fileclient
 {
     char filename[200];
     int n;
+    char menu[500];
+
 public:
-    void files(int sock){
-        bzero(filename,200);
-        cout<<"available files are"<<endl;
-     cout<<"1. Alice in Borderland S03E03 HIN ENG JAP 1080p.mkv"<<endl
-     <<"2. C++ Programming Task PDF.pdf"<<endl<<"3. The Metamorphosis.pdf"<<endl
-     <<"4. white night.pdf"<<endl;
-     cout<<"Enter the name of file: ";
-    
-     fgets(filename,200,stdin);
-     filename[strcspn(filename, "\r\n")] = '\0';
-     n=write(sock,filename,strlen(filename));
+    void files(int sock)
+    {
+        n =read(sock,menu,500);
+         menu[n] = '\0'; 
+        cout<<menu;
+        bzero(filename, 200);
+        fgets(filename, 200, stdin);
+        filename[strcspn(filename, "\r\n")] = '\0';
+        n = write(sock, filename, strlen(filename));
+        cout << filename;
     }
     void recievefile(int sock)
     {
@@ -46,23 +47,26 @@ public:
             cerr << "file not found";
         }
 
-        ofstream outfile(filename,ios::binary);
-        if (!outfile){
-            cerr<<"failed to open output file";
+        ofstream outfile(filename, ios::binary);
+        if (!outfile)
+        {
+            cerr << "failed to open output file";
         }
         char buffer[1024];
-        long totalrecieved=0;
-        while(totalrecieved<filesize){
-            n=recv(sock,buffer,sizeof(buffer),0);
-            if(n<0){
-                cerr<<"file not recived";
+        long totalrecieved = 0;
+        while (totalrecieved < filesize)
+        {
+            n = recv(sock, buffer, sizeof(buffer), 0);
+            if (n < 0)
+            {
+                cerr << "file not recived";
                 exit(1);
             }
-            outfile.write(buffer,n);
-            totalrecieved+=n;
+            outfile.write(buffer, n);
+            totalrecieved += n;
         }
         outfile.close();
-        cout<<"file recieved: "<<totalrecieved<<" bytes"<<endl;
+        cout << "file recieved: " << totalrecieved << " bytes" << endl;
     }
 };
 int main(int argc, char *argv[])
