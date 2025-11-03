@@ -27,8 +27,9 @@ public:
      <<"2. C++ Programming Task PDF.pdf"<<endl<<"3. The Metamorphosis.pdf"<<endl
      <<"4. white night.pdf"<<endl;
      cout<<"Enter the name of file: ";
-    filename[strcspn(filename, "\r\n")] = '\0';
+    
      fgets(filename,200,stdin);
+     filename[strcspn(filename, "\r\n")] = '\0';
      n=write(sock,filename,strlen(filename));
     }
     void recievefile(int sock)
