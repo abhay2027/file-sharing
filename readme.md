@@ -15,7 +15,7 @@
     ```bash
     ./client 182.65.204.249 2324
 
-## Installation on Windows
+## Installation on Windows 
 1. Install zip file 
 
 2.  Change into the project directory:
@@ -27,3 +27,4 @@
 4. Run
    ```bash  
    .\clientwindows.exe 182.65.204.249 2324
+#windwos file is less oop
