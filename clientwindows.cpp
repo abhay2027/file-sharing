@@ -6,7 +6,7 @@
 #include <fstream>
 using namespace std;
 
-#pragma comment(lib, "ws2_32.lib") // Link Winsock library
+#pragma comment(lib, "ws2_32.lib") 
 
 void error(const char *msg)
 {
@@ -98,7 +98,6 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-    // Initialize Winsock
     if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
     {
         error("WSAStartup failed");
