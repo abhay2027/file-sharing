@@ -1,6 +1,6 @@
 
 
-    ```bash
+   ```bash
     git clone https://github.com/abhay2027/file-sharing
 
    ```bash
