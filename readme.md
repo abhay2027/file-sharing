@@ -10,7 +10,10 @@
 3. Compile
    ```bash
    g++ client.cpp -o client
-   ./client 182.65.204.249 2324
+
+4. Run
+    ```bash
+    ./client 182.65.204.249 2324
 
 ## Installation on Windows
 1.nstall zip file 
@@ -18,6 +21,9 @@
 2.  Change into the project directory:
 
 3. Compile
+
    ```bash
-    g++ client.cpp -o client.exe -lws2_32
-   ./client 182.65.204.249 2324
+    g++ clientwindows.cpp -o clientwindows.exe -lws2_32
+4. Run
+   ```bash  
+   .\clientwindows.exe 182.65.204.249 2324
