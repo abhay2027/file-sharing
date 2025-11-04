@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <stdlib.h>
 #include <string.h>
@@ -6,34 +5,39 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <fstream>
 #include <netdb.h>
+#include <fstream>
 using namespace std;
-
 void error(const char *msg)
 {
     perror(msg);
-    exit(0);
+    exit(1);
 }
-class fileclient
+
+class fetch
 {
-    char filename[200];
+protected:
     int n;
+    char filename[200];
     char menu[500];
 
 public:
-    void files(int sock)
+    void getfilename(int sock)
     {
-        n =read(sock,menu,500);
-         menu[n] = '\0'; 
-        cout<<menu;
+        n = read(sock, menu, 500);
+        menu[n] = '\0';
+        cout << menu;
         bzero(filename, 200);
         fgets(filename, 200, stdin);
         filename[strcspn(filename, "\r\n")] = '\0';
         n = write(sock, filename, strlen(filename));
         cout << filename;
     }
-    void recievefile(int sock)
+};
+class recvfile : public fetch
+{
+public:
+    void filerecv(int sock)
     {
         long filesize;
         int n = recv(sock, &filesize, sizeof(filesize), 0);
@@ -69,37 +73,55 @@ public:
         cout << "file recieved: " << totalrecieved << " bytes" << endl;
     }
 };
+class server
+{
+    int argc;
+    char **argv;
+
+public:
+    server(int c, char *v[])
+    {
+        argc = c;
+        argv = v;
+    }
+
+public:
+    void ser()
+    {
+        int sockfd, portno, n;
+        struct sockaddr_in serv_addr;
+        struct hostent *server;
+        if (argc < 3)
+        {
+            cout << "stderr" << argv[0] << "hostname port" << endl;
+            exit(1);
+        }
+        portno = atoi(argv[2]);
+        sockfd = socket(AF_INET, SOCK_STREAM, 0);
+        if (sockfd < 0)
+            error("error opening socket");
+
+        server = gethostbyname(argv[1]);
+        if (server == NULL)
+        {
+            fprintf(stderr, "Error, no such host");
+        }
+        bzero((char *)&serv_addr, sizeof(serv_addr));
+        serv_addr.sin_family = AF_INET;
+        bcopy((char *)server->h_addr, (char *)&serv_addr.sin_addr.s_addr, server->h_length);
+        serv_addr.sin_port = htons(portno);
+        if (connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
+            error("connection failed");
+
+        recvfile recveivefile;
+        recveivefile.getfilename(sockfd);
+        recveivefile.filerecv(sockfd);
+        close(sockfd);
+    }
+};
 int main(int argc, char *argv[])
 {
-    int sockfd, portno, n;
-    struct sockaddr_in serv_addr;
-    struct hostent *server;
-    if (argc < 3)
-    {
-        cout << "stderr" << argv[0] << "hostname port" << endl;
-        exit(1);
-    }
-    portno = atoi(argv[2]);
-    sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (sockfd < 0)
-        error("error opening socket");
-
-    server = gethostbyname(argv[1]);
-    if (server == NULL)
-    {
-        fprintf(stderr, "Error, no such host");
-    }
-    bzero((char *)&serv_addr, sizeof(serv_addr));
-    serv_addr.sin_family = AF_INET;
-    bcopy((char *)server->h_addr, (char *)&serv_addr.sin_addr.s_addr, server->h_length);
-    serv_addr.sin_port = htons(portno);
-    if (connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
-        error("connection failed");
-
-    fileclient clientobj;
-    clientobj.files(sockfd);
-    clientobj.recievefile(sockfd);
-    close(sockfd);
-
+    server s(argc, argv);
+    s.ser();
     return 0;
 }
