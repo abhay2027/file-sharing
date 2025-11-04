@@ -16,7 +16,7 @@
     ./client 182.65.204.249 2324
 
 ## Installation on Windows
-1.nstall zip file 
+1. Install zip file 
 
 2.  Change into the project directory:
 
