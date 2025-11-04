@@ -33,17 +33,13 @@ public:
         write(clientsock, menu.c_str(), menu.size());
         bzero(filename, 200);
         n = read(clientsock, filename, 200);
-        if (n < 0)
+        if (n <= 0)
         {
             cerr << "Error reading file name";
-            exit(1);
+            return;
         }
-        cout << strlen(filename) << endl;
         filename[strcspn(filename, "\r\n")] = '\0';
-        int len = strlen(filename);
-
         cout << "Requested file: [" << filename << "]" << endl;
-        cout << strlen(filename) << endl;
     }
 
     void sendfile(int clientsock)
@@ -54,11 +50,10 @@ public:
             string msg = "ERROR";
             send(clientsock, msg.c_str(), msg.size(), 0);
             cerr << "file not found" << endl;
-            exit(1);
+            return;
         }
         long filesize = file.tellg();
         file.seekg(0, ios::beg);
-
         send(clientsock, &filesize, sizeof(filesize), 0);
 
         char buffer[1024];
@@ -68,7 +63,7 @@ public:
             send(clientsock, buffer, file.gcount(), 0);
         }
         file.close();
-        cout << "file sent: " << filesize << " bytes";
+        cout << "file sent: " << filesize << " bytes" << endl;
     }
 };
 int main(int argc, char *argv[])
@@ -78,35 +73,52 @@ int main(int argc, char *argv[])
         cout << "port no. not provided, program terminated";
         exit(1);
     }
-    int sockfd, newsockfd, portno, n;
-    char buffer[255];
-
+    int sockfd, newsockfd, portno;
     struct sockaddr_in serv_addr, cli_addr;
     socklen_t clilen;
+
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0)
     {
         error("Error opening socket.");
     }
+
+    int opt = 1;
+    setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+
     bzero((char *)&serv_addr, sizeof(serv_addr));
 
     portno = atoi(argv[1]);
     serv_addr.sin_family = AF_INET;
     serv_addr.sin_addr.s_addr = INADDR_ANY;
     serv_addr.sin_port = htons(portno);
+
     if (bind(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
         error("Binding failed");
 
     listen(sockfd, 5);
     clilen = sizeof(cli_addr);
-    newsockfd = accept(sockfd, (struct sockaddr *)&cli_addr, &clilen);
-    if (newsockfd < 0)
-        error("Error on Accept");
 
     fileserver serverobj;
-    serverobj.fetchfile(newsockfd);
-    serverobj.sendfile(newsockfd);
-    close(newsockfd);
+
+    cout << "Server started on port " << portno << endl;
+
+    while (true)
+    {
+        newsockfd = accept(sockfd, (struct sockaddr *)&cli_addr, &clilen);
+        if (newsockfd < 0)
+        {
+            perror("Error on Accept");
+            continue;
+        }
+        cout << "Client connected" << endl;
+        serverobj.fetchfile(newsockfd);
+        serverobj.sendfile(newsockfd);
+        cout << "Client disconnected" << endl;
+        close(newsockfd);
+    }
+
     close(sockfd);
     return 0;
 }
+
