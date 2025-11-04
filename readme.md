@@ -27,4 +27,4 @@
 4. Run
    ```bash  
    .\clientwindows.exe 182.65.204.249 2324
-#windwos file is less oop
+
