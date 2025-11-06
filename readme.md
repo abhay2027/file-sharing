@@ -6,7 +6,7 @@ g++ must be installed
    termux-setup-storage
 2. Install g++
    ```bash
-   plg install clang
+   pkg install clang
 
 ## Installation on linux distros or Android 
 1. Clone the repository:
