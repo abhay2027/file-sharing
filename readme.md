@@ -1,4 +1,4 @@
-## Installation on linux distros
+## Installation on linux distros or Android 
 1. Clone the repository:
    ```bash
    git clone https://github.com/abhay2027/file-sharing.git 
