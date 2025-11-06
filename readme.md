@@ -1,6 +1,6 @@
 # Requirements 
 g++ must be installed 
-# To install g++ on Android 
+## To install g++ on Android 
 1. Install termux from play store and run the command inside termux
    ```bash
    termux-setup-storage
