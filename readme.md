@@ -1,3 +1,13 @@
+# Requirements 
+g++ must be installed 
+# To install g++ on Android 
+1. Install termux from play store and run the command inside termux
+   ```bash
+   termux-setup-storage
+2. Install g++
+   ```bash
+   plg install clang
+
 ## Installation on linux distros or Android 
 1. Clone the repository:
    ```bash
