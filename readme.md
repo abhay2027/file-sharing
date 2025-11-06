@@ -8,7 +8,7 @@ g++ must be installed
    ```bash
    pkg install clang
 
-## Installation on linux distros or Android 
+# Run on linux distros or Android 
 1. Clone the repository:
    ```bash
    git clone https://github.com/abhay2027/file-sharing.git 
